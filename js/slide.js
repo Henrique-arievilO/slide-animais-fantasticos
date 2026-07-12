@@ -1,5 +1,5 @@
 import debounce from "./debounce/debounce.js";
-export default class Slide {
+export class Slide {
   constructor(slide, wrapper) {
     this.slide = document.querySelector(slide);
     this.wrapper = document.querySelector(wrapper);
@@ -95,7 +95,6 @@ export default class Slide {
       const position = this.slidePosition(element);
       return { position, element };
     });
-    console.log(this.slideArray);
   }
 
   //Identifica qual o slide anterior e o próximo
@@ -158,6 +157,8 @@ export default class Slide {
     this.onMove = this.onMove.bind(this);
     this.onEnd = this.onEnd.bind(this);
     this.onResize = debounce(this.onResize.bind(this), 200);
+    this.activePrevSlide = this.activePrevSlide.bind(this);
+    this.activeNextSlide = this.activeNextSlide.bind(this);
   }
 
   //Inicia o evento
@@ -169,5 +170,18 @@ export default class Slide {
     this.changeSlide(0);
     this.addResizeEvent();
     return this;
+  }
+}
+
+export class SlideNav extends Slide {
+  addArrow(previous, next) {
+    this.prevElement = document.querySelector(previous);
+    this.nextElement = document.querySelector(next);
+    this.addArrowEvents();
+  }
+
+  addArrowEvents() {
+    this.prevElement.addEventListener("click", this.activePrevSlide);
+    this.nextElement.addEventListener("click", this.activeNextSlide);
   }
 }
