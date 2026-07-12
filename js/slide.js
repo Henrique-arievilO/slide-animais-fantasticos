@@ -1,7 +1,9 @@
+import debounce from "./debounce/debounce.js";
 export default class Slide {
   constructor(slide, wrapper) {
     this.slide = document.querySelector(slide);
     this.wrapper = document.querySelector(wrapper);
+    this.activeClass = "active";
     this.distance = {
       finalPosition: 0,
       startX: 0,
@@ -81,13 +83,6 @@ export default class Slide {
     this.wrapper.addEventListener("touchend", this.onEnd);
   }
 
-  //Aplica o bind a todos os eventos selecionados
-  bindEvents() {
-    this.onStart = this.onStart.bind(this);
-    this.onMove = this.onMove.bind(this);
-    this.onEnd = this.onEnd.bind(this);
-  }
-
   //Calcula a posição do slide em relação ao centro da tela
   slidePosition(slide) {
     const margin = (this.wrapper.offsetWidth - slide.offsetWidth) / 2;
@@ -119,6 +114,15 @@ export default class Slide {
     this.moveSlide(currentSlide.position);
     this.slidesIndexNav(index);
     this.distance.finalPosition = currentSlide.position;
+    this.changeActiveClass();
+  }
+
+  //Aplica a classe "active" ao slide atual
+  changeActiveClass() {
+    this.slideArray.forEach((item) => {
+      item.element.classList.remove(this.activeClass);
+    });
+    this.slideArray[this.index.current].element.classList.add(this.activeClass);
   }
 
   //Ativa o slide anterior
@@ -135,6 +139,27 @@ export default class Slide {
     }
   }
 
+  //Atualiza de acordo com o redimensionamento da tela
+  onResize() {
+    setTimeout(() => {
+      this.slidesSettings();
+      this.changeSlide(this.index.current);
+    }, 1000);
+  }
+
+  //Adiciona o evento ao resize
+  addResizeEvent() {
+    window.addEventListener("resize", this.onResize);
+  }
+
+  //Aplica o bind a todos os eventos selecionados
+  bindEvents() {
+    this.onStart = this.onStart.bind(this);
+    this.onMove = this.onMove.bind(this);
+    this.onEnd = this.onEnd.bind(this);
+    this.onResize = debounce(this.onResize.bind(this), 200);
+  }
+
   //Inicia o evento
   init() {
     this.bindEvents();
@@ -142,7 +167,7 @@ export default class Slide {
     this.transition(true);
     this.slidesSettings();
     this.changeSlide(0);
+    this.addResizeEvent();
     return this;
   }
 }
-//git branch -D next-prev-nav
