@@ -23,27 +23,41 @@ export default class Slide {
 
   //Ativa o método ao evento de clique
   onStart(event) {
-    event.preventDefault();
-    this.distance.startX = event.clientX;
-    this.wrapper.addEventListener("mousemove", this.onMove);
+    let movetype;
+    if (event.type === "mousedown") {
+      event.preventDefault();
+      this.distance.startX = event.clientX;
+      movetype = "mousemove";
+    } else {
+      this.distance.startX = event.changedTouches[0].clientX;
+      movetype = "touchmove";
+    }
+    this.wrapper.addEventListener(movetype, this.onMove);
   }
 
   //Ativa o método ao evento de mover o mouse
   onMove(event) {
-    const finalPosition = this.updatePosition(event.clientX);
+    const pointerPosition =
+      event.type === "mousemove"
+        ? event.clientX
+        : event.changedTouches[0].clientX;
+    const finalPosition = this.updatePosition(pointerPosition);
     this.moveSlide(finalPosition);
   }
 
   //Desativa os métodos de click e mousemove
   onEnd(event) {
-    this.wrapper.removeEventListener("mousemove", this.onMove);
+    const movetype = (event.type === 'mouseup') ? 'mousemove' : 'touchmove'
+    this.wrapper.removeEventListener(movetype, this.onMove);
     this.distance.finalPosition = this.distance.movePosition;
   }
 
   //Adiciona o evento para cada slide
   addEventSlide() {
     this.wrapper.addEventListener("mousedown", this.onStart);
+    this.wrapper.addEventListener("touchstart", this.onStart);
     this.wrapper.addEventListener("mouseup", this.onEnd);
+    this.wrapper.addEventListener("touchend", this.onEnd);
   }
 
   //Aplica o bind a todos os eventos selecionados
