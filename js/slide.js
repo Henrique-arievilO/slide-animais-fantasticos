@@ -47,7 +47,7 @@ export default class Slide {
 
   //Desativa os métodos de click e mousemove
   onEnd(event) {
-    const movetype = (event.type === 'mouseup') ? 'mousemove' : 'touchmove'
+    const movetype = event.type === "mouseup" ? "mousemove" : "touchmove";
     this.wrapper.removeEventListener(movetype, this.onMove);
     this.distance.finalPosition = this.distance.movePosition;
   }
@@ -67,10 +67,44 @@ export default class Slide {
     this.onEnd = this.onEnd.bind(this);
   }
 
+  //Calcula a posição do slide em relação ao centro da tela
+  slidePosition(slide) {
+    const margin = (this.wrapper.offsetWidth - slide.offsetWidth) / 2;
+    return -(slide.offsetLeft - margin);
+  }
+
+  //Slide Settings
+  slidesSettings() {
+    this.slideArray = [...this.slide.children].map((element) => {
+      const position = this.slidePosition(element);
+      return { position, element };
+    });
+    console.log(this.slideArray);
+  }
+
+  //Identifica qual o slide anterior e o próximo
+  slidesIndexNav(index) {
+    const lastItem = this.slideArray.length - 1;
+    this.index = {
+      previous: index ? index - 1 : undefined,
+      current: index,
+      next: index === lastItem ? undefined : index + 1,
+    };
+  }
+
+  //Altera o slide de acordo com o index
+  changeSlide(index) {
+    const currentSlide = this.slideArray[index];
+    this.moveSlide(currentSlide.position);
+    this.slidesIndexNav(index);
+    this.distance.finalPosition = currentSlide.position;
+  }
+
   //Inicia o evento
   init() {
     this.bindEvents();
     this.addEventSlide();
+    this.slidesSettings();
     return this;
   }
 }
