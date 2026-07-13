@@ -62,3 +62,47 @@ img {
 [data-control="slide"] li a:hover {
   background-color: #1f53ba;
 }
+
+.custom-controls {
+  display: flex;
+  justify-content: center;
+  margin: 40px 0 20px;
+  flex-wrap: wrap;
+}
+
+.custom-controls li {
+  opacity: .5;
+  transform: scale(.8);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 8px;
+  cursor: pointer;
+  transition: .3s;
+}
+
+.custom-controls li.active {
+  opacity: 1;
+  transform: scale(1);
+  outline: solid 2px #1f53ba;
+}
+
+.arrow-nav {
+  margin: 2rem 1rem;
+  display: flex;
+  justify-content: space-around;
+}
+
+button {
+  padding: 4px 8px;
+  font-size: 1.5rem;
+  background-color: #1f53ba;
+  border: none;
+  color: #eff4fc;
+  cursor: pointer;
+}
+
+button:hover {
+  color: #acc3f1;
+}
